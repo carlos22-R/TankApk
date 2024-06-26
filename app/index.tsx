@@ -6,6 +6,7 @@ const HomePage =() =>{
     <View>
         <Text>Home Page</Text>
         <Link href="/users/1">Go to user 1 </Link>
+        <Link href="/users/Prueba">Go to Prueba </Link>
     </View>
   )
 }
