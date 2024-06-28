@@ -1,125 +1,154 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
-
-const data = [
-  { label: 'Item 1', value: '1' },
-  { label: 'Item 2', value: '2' },
-  { label: 'Item 3', value: '3' },
-  { label: 'Item 4', value: '4' },
-  { label: 'Item 5', value: '5' },
-  { label: 'Item 6', value: '6' },
-  { label: 'Item 7', value: '7' },
-  { label: 'Item 8', value: '8' },
-];
-const ZonaPoblacional=[
-    {label: 'Urbano', value:'1'},
-    {label: 'Rural', value:'2'}
-];
+import datosJson from '../../Data/Datos copy.json'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 
 const Prueba = () => {
   const [departamento, setDepartamento] = useState(null);
   const [municipio, setMunicipio] = useState(null);
   const [zonaPoblacional, setZonaPoblacional] = useState(null);
-  const [isFocusDepartamento, setIsFocusDepartamento] = useState(false);
-  const [isFocusMunicipio, setIsFocusMunicipio] = useState(false);
-  const [isFocusZonaPoblacional, setIsFocusZonaPoblacional] = useState(false);
+  const [departamentosData, setDepartamentosData] = useState([]);
+  const [municipiosData, setMunicipiosData] = useState([]);
+  const [tasaCrecimiento, setTasaCrecimiento] = useState(null);
+
+// Cargar datos del JSON cuando el componente se monta
+useEffect(() => {
+  const loadDepartamentos = async () => {
+    try {
+      // Simulamos una carga asíncrona
+      setDepartamentosData(datosJson.departamentos);
+      console.log('Departamentos cargados:', datosJson.departamentos);
+    } catch (error) {
+      console.error('Error loading departamentos data', error);
+    }
+  };
+
+  loadDepartamentos();
+}, []);
+
+// Actualizar municipios y tasa de crecimiento cuando se selecciona un departamento
+useEffect(() => {
+  if (departamentosData.length > 0) {
+    const selectedDepartamento = departamentosData.find(depto => depto.id === departamento);
+    if (selectedDepartamento) {
+      setMunicipiosData(selectedDepartamento.municipios || []);
+      setTasaCrecimiento(selectedDepartamento.tasaCrecimiento || null);
+    } else {
+      setMunicipiosData([]);
+      setTasaCrecimiento(null);
+    }
+  } else {
+    setMunicipiosData([]);
+    setTasaCrecimiento(null);
+  }
+}, [departamento, departamentosData]);
+
+
+  const renderDepartamentosDropdown = () => {
+    return (
+      <View>
+        <Text>Departamento</Text>
+        <Dropdown
+          style={styles.dropdown}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={departamentosData.map(depto => ({ label: depto.nombre, value: depto.id }))}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!departamento ? 'Selecciona departamento' : '...'}
+          searchPlaceholder="Buscar..."
+          value={departamento}
+          onChange={item => setDepartamento(item.value)}
+          renderLeftIcon={() => (
+            <AntDesign
+              style={styles.icon}
+              color={departamento ? 'blue' : 'black'}
+              name="Safety"
+              size={20}
+            />
+          )}
+        />
+      </View>
+    );
+  };
+
+  const renderMunicipiosDropdown = () => {
+    return (
+      <View>
+        <Text>Municipio</Text>
+        <Dropdown
+          style={styles.dropdown}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={municipiosData.map(municipio => ({ label: municipio.nombre, value: municipio.id }))}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!municipio ? 'Selecciona municipio' : '...'}
+          searchPlaceholder="Buscar..."
+          value={municipio}
+          onChange={item => setMunicipio(item.value)}
+          renderLeftIcon={() => (
+            <AntDesign
+              style={styles.icon}
+              color={municipio ? 'blue' : 'black'}
+              name="Safety"
+              size={20}
+            />
+          )}
+        />
+      </View>
+    );
+  };
+
+  const renderZonaPoblacionalDropdown = () => {
+    return (
+      <View>
+        <Text>Zona Poblacional</Text>
+        <Dropdown
+          style={styles.dropdown}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={[
+            { label: 'Urbano', value: '1' },
+            { label: 'Rural', value: '2' }
+          ]}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!zonaPoblacional ? 'Selecciona zona poblacional' : '...'}
+          searchPlaceholder="Buscar..."
+          value={zonaPoblacional}
+          onChange={item => setZonaPoblacional(item.value)}
+          renderLeftIcon={() => (
+            <AntDesign
+              style={styles.icon}
+              color={zonaPoblacional ? 'blue' : 'black'}
+              name="Safety"
+              size={20}
+            />
+          )}
+        />
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
-      <Text>Departamento</Text>
-      <Dropdown
-        style={[styles.dropdown, isFocusDepartamento && { borderColor: 'blue' }]}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
-        inputSearchStyle={styles.inputSearchStyle}
-        iconStyle={styles.iconStyle}
-        data={data}
-        search
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder={!isFocusDepartamento ? 'Select item' : '...'}
-        searchPlaceholder="Search..."
-        value={departamento}
-        onFocus={() => setIsFocusDepartamento(true)}
-        onBlur={() => setIsFocusDepartamento(false)}
-        onChange={item => {
-          setDepartamento(item.value);
-          setIsFocusDepartamento(false);
-        }}
-        renderLeftIcon={() => (
-          <AntDesign
-            style={styles.icon}
-            color={isFocusDepartamento ? 'blue' : 'black'}
-            name="Safety"
-            size={20}
-          />
-        )}
-      />
-      
-      <Text>Municipio</Text>
-      <Dropdown
-        style={[styles.dropdown, isFocusMunicipio && { borderColor: 'blue' }]}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
-        inputSearchStyle={styles.inputSearchStyle}
-        iconStyle={styles.iconStyle}
-        data={data}
-        search
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder={!isFocusMunicipio ? 'Select item' : '...'}
-        searchPlaceholder="Search..."
-        value={municipio}
-        onFocus={() => setIsFocusMunicipio(true)}
-        onBlur={() => setIsFocusMunicipio(false)}
-        onChange={item => {
-          setMunicipio(item.value);
-          setIsFocusMunicipio(false);
-        }}
-        renderLeftIcon={() => (
-          <AntDesign
-            style={styles.icon}
-            color={isFocusMunicipio ? 'blue' : 'black'}
-            name="Safety"
-            size={20}
-          />
-        )}
-      />
-
-      <Text>Zona Poblacional</Text>
-      <Dropdown
-        style={[styles.dropdown, isFocusZonaPoblacional && { borderColor: 'blue' }]}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
-        inputSearchStyle={styles.inputSearchStyle}
-        iconStyle={styles.iconStyle}
-        data={ZonaPoblacional}
-        search
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder={!isFocusZonaPoblacional ? 'Select item' : '...'}
-        searchPlaceholder="Search..."
-        value={zonaPoblacional}
-        onFocus={() => setIsFocusZonaPoblacional(true)}
-        onBlur={() => setIsFocusZonaPoblacional(false)}
-        onChange={item => {
-          setZonaPoblacional(item.value);
-          setIsFocusZonaPoblacional(false);
-        }}
-        renderLeftIcon={() => (
-          <AntDesign
-            style={styles.icon}
-            color={isFocusZonaPoblacional ? 'blue' : 'black'}
-            name="Safety"
-            size={20}
-          />
-        )}
-      />
+      {renderDepartamentosDropdown()}
+      {renderMunicipiosDropdown()}
+      {renderZonaPoblacionalDropdown()}
     </View>
   );
 };
@@ -141,15 +170,6 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 5,
-  },
-  label: {
-    position: 'absolute',
-    backgroundColor: 'white',
-    left: 22,
-    top: 8,
-    zIndex: 999,
-    paddingHorizontal: 8,
-    fontSize: 14,
   },
   placeholderStyle: {
     fontSize: 16,
