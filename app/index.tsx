@@ -16,6 +16,7 @@ const HomePage =() =>{
         <Text>Home Page del usuario {state.Departamento}</Text>
         <Link href="/users/tabla">Go to user 1 </Link>
         <Link href="/users/Prueba">Go to Prueba </Link>
+        <Link href="/users/resultado">Go to Resultado </Link>
         <TextInput placeholder="Departamento" value={state.Departamento} onChangeText={(value)=> handleInputChange('Departamento',value)}></TextInput>
       
     </View>
