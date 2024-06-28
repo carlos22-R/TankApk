@@ -6,8 +6,12 @@ export const AppProvider = ({ children }) => {
   const [state, setState] = useState({
     Departamento:"",
     municpio: '',
-    tasaC:null,
-    zonaPoblacion:""
+    tasaC:0,
+    zonaPoblacion:"",
+    lotes:0,
+    lotesPersona:0,
+    lotesHabitantes:0,
+    totalSub:0
   });
 
   return (

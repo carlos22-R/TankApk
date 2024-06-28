@@ -1,7 +1,7 @@
 import { View, Text, TextInput, StyleSheet, FlatList ,useWindowDimensions,ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Checkbox } from 'react-native-paper';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import tw from 'twrnc';
 import { useContext } from "react";
 import AppContext from "../AppContext";
@@ -35,16 +35,19 @@ const initialData = [
   const UserPage = () => {
     const [data, setData] = useState(initialData);
     const { width, height } = useWindowDimensions();
-  
+    const { state, setState } = useContext(AppContext);
+    const [totalSubtotal,setTotal]=useState(0)
     const handleExistenciaChange = (index=0, value="") => {
       const newData = [...data];
     newData[index].existencia = value;
     if (value === 'SI') {
       newData[index].subtotal = newData[index].cantidad * newData[index].dotacion;
+      setTotal(data.reduce((sum, row) => sum + row.subtotal, 0))
     } else {
       newData[index].subtotal = 0;
     }
     setData(newData);
+    setTotal(data.reduce((sum, row) => sum + row.subtotal, 0))
     };
   
     const handleCantidadChange = (index=0, value="") => {
@@ -52,14 +55,23 @@ const initialData = [
       newData[index].cantidad = parseInt(value) || 0;
       if (newData[index].existencia === 'SI') {
         newData[index].subtotal = newData[index].cantidad * newData[index].dotacion;
+        
       } else {
         newData[index].subtotal = 0;
       }
       setData(newData);
+      setTotal(data.reduce((sum, row) => sum + row.subtotal, 0))
     };
-  
-    const totalSubtotal = data.reduce((sum, row) => sum + row.subtotal, 0);
-  
+    useEffect(() => {
+      
+      setTotal(data.reduce((sum, row) => sum + row.subtotal, 0))
+    }, [])
+    useEffect(() => {
+      
+      setState({...state,totalSub:totalSubtotal})
+    }, [totalSubtotal])
+    
+    console.log(state)
     const isPortrait = height >= width;
   
     return (
@@ -79,7 +91,7 @@ const initialData = [
                 <View style={[styles.pickerContainer, item.existencia === 'SI' ? styles.existenciaSI : styles.existenciaNO]}>
                 <Picker
                   selectedValue={item.existencia}
-                  style={tw`flex-1 h-10 ${item.existencia==='NO'?' bg-red':' bg-green'}`}
+                  style={tw`flex-1 h-10 `}
                   onValueChange={(value) => handleExistenciaChange(index, value)}
                 >
                   <Picker.Item label="SI" value="SI" />
