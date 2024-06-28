@@ -12,38 +12,43 @@ const Prueba = () => {
   const [municipiosData, setMunicipiosData] = useState([]);
   const [tasaCrecimiento, setTasaCrecimiento] = useState(null);
 
-// Cargar datos del JSON cuando el componente se monta
-useEffect(() => {
-  const loadDepartamentos = async () => {
-    try {
-      // Simulamos una carga asíncrona
-      setDepartamentosData(datosJson.departamentos);
-      console.log('Departamentos cargados:', datosJson.departamentos);
-    } catch (error) {
-      console.error('Error loading departamentos data', error);
-    }
-  };
+  useEffect(() => {
+    // Cargar datos del JSON cuando el componente se monta
+    const loadDepartamentos = async () => {
+      try {
+        // Simulamos una carga asíncrona
+        setDepartamentosData(datosJson.departamentos);
+        console.log('Departamentos cargados:', datosJson.departamentos);
+      } catch (error) {
+        console.error('Error loading departamentos data', error);
+      }
+    };
 
-  loadDepartamentos();
-}, []);
+    loadDepartamentos();
+  }, []);
 
-// Actualizar municipios y tasa de crecimiento cuando se selecciona un departamento
-useEffect(() => {
-  if (departamentosData.length > 0) {
-    const selectedDepartamento = departamentosData.find(depto => depto.id === departamento);
-    if (selectedDepartamento) {
-      setMunicipiosData(selectedDepartamento.municipios || []);
-      setTasaCrecimiento(selectedDepartamento.tasaCrecimiento || null);
+  useEffect(() => {
+    // Actualizar municipios y tasa de crecimiento cuando se selecciona un departamento
+    if (departamento && departamentosData.length > 0) {
+      console.log('Departamento seleccionado:', departamento);
+      console.log('Cargando municipios y tasa de crecimiento');
+      const selectedDepartamento = departamentosData.find(depto => depto.nombre === departamento);
+      if (selectedDepartamento) {
+        setMunicipiosData(selectedDepartamento.municipios || []);
+        setTasaCrecimiento(selectedDepartamento.tasaCrecimiento || null);
+        console.log('Municipios cargados:', selectedDepartamento.municipios);
+      } else {
+        // Si no se encuentra el departamento seleccionado, reiniciar los datos de municipios y tasa de crecimiento
+        setMunicipiosData([]);
+        setTasaCrecimiento(null);
+      }
     } else {
+      // Si no hay departamento seleccionado, reiniciar los datos de municipios y tasa de crecimiento
       setMunicipiosData([]);
       setTasaCrecimiento(null);
+      console.log('No se cargan municipios');
     }
-  } else {
-    setMunicipiosData([]);
-    setTasaCrecimiento(null);
-  }
-}, [departamento, departamentosData]);
-
+  }, [departamento, departamentosData]);
 
   const renderDepartamentosDropdown = () => {
     return (
@@ -55,7 +60,7 @@ useEffect(() => {
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
           iconStyle={styles.iconStyle}
-          data={departamentosData.map(depto => ({ label: depto.nombre, value: depto.id }))}
+          data={departamentosData.map(depto => ({ label: depto.nombre, value: depto.nombre }))}
           search
           maxHeight={300}
           labelField="label"
@@ -63,7 +68,11 @@ useEffect(() => {
           placeholder={!departamento ? 'Selecciona departamento' : '...'}
           searchPlaceholder="Buscar..."
           value={departamento}
-          onChange={item => setDepartamento(item.value)}
+          onChange={item => {
+            console.log('Departamento cambiado a:', item.value);
+            setDepartamento(item.value);
+            setMunicipio(null); // Resetear el municipio seleccionado al cambiar el departamento
+          }}
           renderLeftIcon={() => (
             <AntDesign
               style={styles.icon}
@@ -87,7 +96,7 @@ useEffect(() => {
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
           iconStyle={styles.iconStyle}
-          data={municipiosData.map(municipio => ({ label: municipio.nombre, value: municipio.id }))}
+          data={municipiosData.map(municipio => ({ label: municipio.nombre, value: municipio.nombre }))}
           search
           maxHeight={300}
           labelField="label"
