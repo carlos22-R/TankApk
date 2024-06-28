@@ -30,13 +30,11 @@ const Prueba = () => {
   useEffect(() => {
     // Actualizar municipios y tasa de crecimiento cuando se selecciona un departamento
     if (departamento && departamentosData.length > 0) {
-      console.log('Departamento seleccionado:', departamento);
       console.log('Cargando municipios y tasa de crecimiento');
       const selectedDepartamento = departamentosData.find(depto => depto.nombre === departamento);
       if (selectedDepartamento) {
         setMunicipiosData(selectedDepartamento.municipios || []);
-        setTasaCrecimiento(selectedDepartamento.tasaCrecimiento || null);
-        console.log('Municipios cargados:', selectedDepartamento.municipios);
+        setTasaCrecimiento(selectedDepartamento.tasa_poblacional || null);
       } else {
         // Si no se encuentra el departamento seleccionado, reiniciar los datos de municipios y tasa de crecimiento
         setMunicipiosData([]);
@@ -69,7 +67,6 @@ const Prueba = () => {
           searchPlaceholder="Buscar..."
           value={departamento}
           onChange={item => {
-            console.log('Departamento cambiado a:', item.value);
             setDepartamento(item.value);
             setMunicipio(null); // Resetear el municipio seleccionado al cambiar el departamento
           }}
@@ -96,7 +93,11 @@ const Prueba = () => {
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
           iconStyle={styles.iconStyle}
-          data={municipiosData.map(municipio => ({ label: municipio.nombre, value: municipio.nombre }))}
+          data={municipiosData.map(municipio => ({
+            label: municipio.nombre,
+            value: municipio.nombre,
+            tasa_poblacional: municipio.tasa_poblacional
+          }))}
           search
           maxHeight={300}
           labelField="label"
@@ -104,7 +105,16 @@ const Prueba = () => {
           placeholder={!municipio ? 'Selecciona municipio' : '...'}
           searchPlaceholder="Buscar..."
           value={municipio}
-          onChange={item => setMunicipio(item.value)}
+          onChange={item => {
+            setMunicipio(item.value);
+            setTasaCrecimiento(item.tasa_poblacional);
+          }}
+          renderItem={item => (
+            <View style={styles.dropdownItem}>
+              <Text>{item.label}</Text>
+              <Text style={styles.tasaCrecimientoText}>Tasa: {item.tasa_poblacional}</Text>
+            </View>
+          )}
           renderLeftIcon={() => (
             <AntDesign
               style={styles.icon}
@@ -193,5 +203,9 @@ const styles = StyleSheet.create({
   inputSearchStyle: {
     height: 40,
     fontSize: 16,
+  },
+  tasaCrecimientoText: {
+    fontSize: 16,
+    marginTop: 8,
   },
 });
