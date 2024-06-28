@@ -1,6 +1,7 @@
-import { View, Text, TextInput, StyleSheet, FlatList ,useWindowDimensions,ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, FlatList ,useWindowDimensions,ScrollView ,  Button,TouchableOpacity} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Checkbox } from 'react-native-paper';
+import { Link } from "expo-router";
 import { useEffect, useState } from 'react';
 import tw from 'twrnc';
 import { useContext } from "react";
@@ -114,13 +115,39 @@ const initialData = [
             </View>
           </ScrollView>
         </View>
+        <View style={styles.container}>
+        
+      <TouchableOpacity style={styles.button} >
+      <Link href="/users/Prueba"> 
+        <Text style={styles.buttonText}>
+          Siguiente</Text>
+      </Link>
+      </TouchableOpacity>
+      
+    </View>
       </ScrollView>
     );
   };
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      padding: 16,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    marginRight:10,
+    marginBottom:10
+    },
+    text: {
+      fontSize: 24,
+      marginBottom: 16,
+    },
+    button: {
+      backgroundColor: 'green',
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 5,
+    },
+    buttonText: {
+      color: 'white',
+      fontSize: 16,
     },
     row: {
       flexDirection: 'row',
