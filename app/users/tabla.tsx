@@ -118,7 +118,7 @@ const initialData = [
         <View style={styles.container}>
         
       <TouchableOpacity style={styles.button} >
-      <Link href="/users/Prueba"> 
+      <Link href="/users/resultado"> 
         <Text style={styles.buttonText}>
           Siguiente</Text>
       </Link>

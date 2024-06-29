@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { View, Text, TextInput, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ScrollView ,TouchableOpacity} from 'react-native';
 import tw from 'twrnc';
+import { Link } from 'expo-router';
 import { useContext } from "react";
 import AppContext from "../AppContext";
 const resultado = () => {
@@ -22,7 +23,9 @@ const resultado = () => {
     })
     let v1 = ((parseInt(state.lotesHabitantes)*parseInt(state.dotacion)/1000).toFixed(2))
     let v2 =  (((v1/horasBombeo))*2).toFixed(2)
-    console.log(state)
+    let local=state.zonaPoblacion==="1"? 90:0
+    let vtan=(parseInt(v1)+parseInt(v2)+local)
+    console.log(v1,v2,local,"esto",(vtan))
   return (
     <ScrollView contentContainerStyle={tw`p-4 items-center`}>
     <View style={tw`w-full max-w-md border border-black`}>
@@ -107,7 +110,7 @@ const resultado = () => {
           <Text style={tw`flex-1 bg-pink-200 text-center p-2`}>V1 = {v1.toString()}</Text>
           <Text style={tw`flex-1 bg-blue-200 text-center p-2`}>V2 = {v2.toString()}</Text>
           
-          <Text style={tw`flex-1 bg-blue-200 text-center p-1`}>Vincendios = 90</Text>
+          <Text style={tw`flex-1 bg-blue-200 text-center p-1`}>Vincendios = {local.toString()}</Text>
         </View>
         </View>
         <View style={tw`w-full max-w-md border border-black m-2`}>
@@ -118,7 +121,7 @@ const resultado = () => {
             value="4000" 
              
           /> */}
-          <Text style={tw`bg-yellow-200 text-center p-1 border border-black`}>Vtanque m3</Text>
+          <Text style={tw`bg-yellow-200 text-center p-1 border border-black`}>{(vtan).toString()} m3</Text>
           
         </View>
         </View>
@@ -130,15 +133,43 @@ const resultado = () => {
             value="4003" 
              
           /> */}
-          <Text style={tw`bg-yellow-200 text-center p-1 border border-black`}>4003000 m3</Text>
+          <Text style={tw`bg-yellow-200 text-center p-1 border border-black`}>{(Math.ceil(parseInt(vtan)/ 500) * 500).toString()} m3</Text>
           
         </View>
         </View>
-      
+        <View style={styles.container}>
+        
+        <TouchableOpacity style={styles.button} >
+        <Link href="/"> 
+          <Text style={styles.buttonText}>
+            Finalizar</Text>
+        </Link>
+        </TouchableOpacity>
+        
+      </View>
   </ScrollView>
   
 );
 };
+const styles = StyleSheet.create({
+  container: {
+  justifyContent: 'center',
+  alignItems: 'flex-end',
+  marginRight:10,
+  marginBottom:10
+  },
 
+  button: {
+    backgroundColor: 'green',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+
+});
 
 export default resultado

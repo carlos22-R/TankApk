@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput , ScrollView} from 'react-native';
+import { Link } from 'expo-router';
+import { StyleSheet, Text, View, TextInput , ScrollView, TouchableOpacity} from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import datosJson from '../../Data/Datos copy.json';
@@ -313,6 +314,16 @@ const Prueba = () => {
       {renderPoblacionActualSection()}
       {renderPoblacionFuturaSection()}
     </View>
+        <View style={styles.containerb}>
+        
+      <TouchableOpacity style={styles.button} >
+      <Link href="/users/tabla"> 
+        <Text style={styles.buttonText}>
+          Siguiente</Text>
+      </Link>
+      </TouchableOpacity>
+      
+    </View>
     </ScrollView>
   );
 };
@@ -322,6 +333,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 16,
   },
+  containerb: {
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    marginRight:10,
+    marginBottom:10,
+    backgroundColor: 'white'
+    },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -367,6 +385,16 @@ const styles = StyleSheet.create({
     marginRight: 8,
     fontSize: 16,
     color: 'black',
+  },
+  button: {
+    backgroundColor: 'green',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
   },
   input: {
     flex: 1,
