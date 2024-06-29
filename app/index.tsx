@@ -1,53 +1,61 @@
 import { Link } from "expo-router";
-import { View , Text,Button, TextInput, TouchableOpacity,StyleSheet} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useContext } from "react";
 import AppContext from "./AppContext";
-const HomePage =() =>{
+
+const HomePage = () => {
   const { state, setState } = useContext(AppContext);
-  const handleInputChange = (field="nombre", value="valor") => {
-    setState({
-      ...state,
-      [field]: value,
-    });
-  };
+
   return (
-   
-    <View>
-        <Text>Home Page del usuario </Text>
-        <Link href="/users/tabla">Go to user 1 </Link>
-        <Link href="/users/Prueba">Go to Prueba </Link>
-        <Link href="/users/resultado">Go to Resultado </Link>
-        <View style={styles.containerb}>
-        
-        <TouchableOpacity style={styles.button} >
-        <Link href="/users/Prueba"> 
-          <Text style={styles.buttonText}>
-            Comenzar</Text>
-        </Link>
+    <View style={styles.container}>
+      <Text style={styles.header}>Bienvenido a la App</Text>
+      <Text style={styles.subHeader}>Dotacion Civil</Text>
+      
+      <View style={styles.navigationContainer}>
+        <TouchableOpacity style={styles.button}>
+          <Link href="/users/Prueba">
+            <Text style={styles.buttonText}>Comenzar</Text>
+          </Link>
         </TouchableOpacity>
-        
       </View>
     </View>
-  )
-}
-const styles = StyleSheet.create({
-  containerb: {
-  justifyContent: 'center',
-  alignItems: 'flex-end',
-  marginRight:10,
-  marginBottom:10
-  },
+  );
+};
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor:'#a8dadc',
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  subHeader: {
+    fontSize: 18,
+    marginBottom: 40,
+  },
+  navigationContainer: {
+    width: '100%',
+    alignItems: 'center',
+  },
   button: {
     backgroundColor: 'green',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+    marginBottom: 10,
+    width: '80%',
+    alignItems: 'center',
   },
   buttonText: {
     color: 'white',
     fontSize: 16,
   },
-
 });
+
 export default HomePage;
