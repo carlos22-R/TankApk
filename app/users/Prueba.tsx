@@ -18,6 +18,7 @@ const Prueba = () => {
   const [numHabitantes, setNumHabitantes] = useState('');
   const [nAnios,setnAnios] = useState('');
   const [numHabitantesFuturos, setNumHabitantesFuturos] = useState('');
+  const [dotacionLPD, setdotacionLPD] = useState('');
 
   const { state, setState } = useContext(AppContext);
   useEffect(() => {
@@ -89,7 +90,7 @@ const Prueba = () => {
         else{
           const resultado = habitantesActuales * (1 + ((tasadecrecimiento / 100) * numeroAnios));
           console.log(habitantesActuales, "tasa de crecimiento:" + tasadecrecimiento,numeroAnios);
-          console.log(5000*(1+(tasaCrecimiento/100)));
+          console.log(5000*(1+(tasadecrecimiento/100)));
           setNumHabitantesFuturos(Math.round(resultado).toString());
         }
       } else {
@@ -97,6 +98,12 @@ const Prueba = () => {
       }
       setState({...state,anos:nAnios,habitantes:numHabitantes,lotesHabitantes:numHabitantesFuturos,municpio:municipio,tasaC:tasaPoblacionalInput})
     }, [nAnios,numHabitantes,tasaPoblacionalInput]);
+
+    useEffect(() =>{
+
+      setState({...state,dotacion:dotacionLPD});
+
+    },[dotacionLPD]);
 
   const renderDepartamentosDropdown = () => {
     return (
@@ -281,6 +288,16 @@ const Prueba = () => {
             placeholderTextColor="gray"
           />
         </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={[styles.input, styles.textInput]}
+            value={dotacionLPD}
+            onChangeText={setdotacionLPD}
+            keyboardType="numeric"
+            placeholder="Dotacion l/p/d"
+            placeholderTextColor="gray"
+          />
+        </View>
       </View>
     );
   };
@@ -361,12 +378,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     marginBottom: 0, // Remove marginBottom for text inputs in Población Actual
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
+  }
 });
 
 export default Prueba;
