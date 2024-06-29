@@ -90,19 +90,21 @@ const Prueba = () => {
         else{
           const resultado = habitantesActuales * (1 + ((tasadecrecimiento / 100) * numeroAnios));
           console.log(habitantesActuales, "tasa de crecimiento:" + tasadecrecimiento,numeroAnios);
-          console.log(5000*(1+(tasadecrecimiento/100)));
+          console.log(resultado);
           setNumHabitantesFuturos(Math.round(resultado).toString());
         }
       } else {
         setNumHabitantesFuturos('');
       }
-      setState({...state,anos:nAnios,habitantes:numHabitantes,lotesHabitantes:numHabitantesFuturos,municpio:municipio,tasaC:tasaPoblacionalInput})
+      setState({...state,anos:nAnios,habitantes:numHabitantes,municpio:municipio,tasaC:tasaPoblacionalInput})
     }, [nAnios,numHabitantes,tasaPoblacionalInput]);
 
     useEffect(() =>{
 
       setState({...state,dotacion:dotacionLPD});
-
+      console.log(numHabitantesFuturos)
+      setState({...state,lotesHabitantes:numHabitantesFuturos})
+      console.log(state)
     },[dotacionLPD]);
 
   const renderDepartamentosDropdown = () => {

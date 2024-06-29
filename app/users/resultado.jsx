@@ -5,10 +5,10 @@ import { useContext } from "react";
 import AppContext from "../AppContext";
 const resultado = () => {
   const { state, setState } = useContext(AppContext);
-  const [horasBombeo, setHorasBombeo] = useState('12');
+  const [horasBombeo, setHorasBombeo] = useState(12);
   const[valorinicil,setValor] =useState({
-        valor:0.04,
-        valor2:41.61
+        valor:(state.totalSub/86400).toFixed(2),
+        valor2:(parseInt(state.lotesHabitantes)*parseInt(state.dotacion)/86400).toFixed(2)
     })
     const [valorA,setValorA]= useState({
         qmaxD:(1.2*valorinicil.valor).toFixed(2),
@@ -20,6 +20,8 @@ const resultado = () => {
         qmaxH:(2.4*valorinicil.valor2).toFixed(2),
         qminH:(0.3*valorinicil.valor2).toFixed(2)
     })
+    let v1 = ((parseInt(state.lotesHabitantes)*parseInt(state.dotacion)/1000).toFixed(2))
+    let v2 =  (((v1/horasBombeo))*2).toFixed(2)
     console.log(state)
   return (
     <ScrollView contentContainerStyle={tw`p-4 items-center`}>
@@ -60,7 +62,7 @@ const resultado = () => {
       </View>
       <View style={tw`flex-row`}>
         <Text style={tw`flex-1 bg-pink-200 text-center p-2`}>Q medio diario</Text>
-        <TextInput style={tw`flex-1 bg-yellow-200 text-center p-2 border border-black`} value={valorinicil.valor.toString()} />
+        <TextInput style={tw`flex-1 bg-yellow-200 text-center p-2 border border-black`} value={valorinicil.valor2.toString()} />
         <Text style={tw`flex-1 bg-gray-300 text-center p-2`}>lts/s</Text>
       </View>
       <View style={tw`flex-row`}>
@@ -94,7 +96,7 @@ const resultado = () => {
           <Text style={tw`flex-1 bg-gray-300 text-center p-2`}>horas de bombeo</Text>
           <TextInput 
             style={tw`flex-1 bg-yellow-200 text-center p-2 border border-black`} 
-            value={horasBombeo} 
+            value={horasBombeo.toString()} 
             onChangeText={setHorasBombeo} 
             keyboardType="numeric"
           />
@@ -102,8 +104,8 @@ const resultado = () => {
         </View>
         <View style={tw`w-full max-w-md border border-black m-2`}>
         <View style={tw`flex-row `}>
-          <Text style={tw`flex-1 bg-pink-200 text-center p-2`}>V1 = 20</Text>
-          <Text style={tw`flex-1 bg-blue-200 text-center p-2`}>V2 = 10</Text>
+          <Text style={tw`flex-1 bg-pink-200 text-center p-2`}>V1 = {v1.toString()}</Text>
+          <Text style={tw`flex-1 bg-blue-200 text-center p-2`}>V2 = {v2.toString()}</Text>
           
           <Text style={tw`flex-1 bg-blue-200 text-center p-1`}>Vincendios = 90</Text>
         </View>
