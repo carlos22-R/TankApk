@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
 import { View, Text, TextInput, StyleSheet, ScrollView } from 'react-native';
 import tw from 'twrnc';
+import { useContext } from "react";
+import AppContext from "../AppContext";
 const resultado = () => {
-    const [horasBombeo, setHorasBombeo] = useState('12');
-    const[valorinicil,setValor] =useState({
+  const { state, setState } = useContext(AppContext);
+  const [horasBombeo, setHorasBombeo] = useState('12');
+  const[valorinicil,setValor] =useState({
         valor:0.04,
         valor2:41.61
     })
@@ -17,6 +20,7 @@ const resultado = () => {
         qmaxH:(2.4*valorinicil.valor2).toFixed(2),
         qminH:(0.3*valorinicil.valor2).toFixed(2)
     })
+    console.log(state)
   return (
     <ScrollView contentContainerStyle={tw`p-4 items-center`}>
     <View style={tw`w-full max-w-md border border-black`}>

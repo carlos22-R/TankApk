@@ -11,7 +11,10 @@ export const AppProvider = ({ children }) => {
     lotes:0,
     lotesPersona:0,
     lotesHabitantes:0,
-    totalSub:0
+    totalSub:0,
+    anos:0,
+    habitantes:0,
+    dotacion:150
   });
 
   return (

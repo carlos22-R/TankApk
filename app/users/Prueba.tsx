@@ -3,7 +3,8 @@ import { StyleSheet, Text, View, TextInput , ScrollView} from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import datosJson from '../../Data/Datos copy.json';
-
+import { useContext } from "react";
+import AppContext from "../AppContext";
 const Prueba = () => {
   const [departamento, setDepartamento] = useState(null);
   const [municipio, setMunicipio] = useState(null);
@@ -18,7 +19,7 @@ const Prueba = () => {
   const [nAnios,setnAnios] = useState('');
   const [numHabitantesFuturos, setNumHabitantesFuturos] = useState('');
 
-
+  const { state, setState } = useContext(AppContext);
   useEffect(() => {
     const loadDepartamentos = async () => {
       try {
@@ -45,6 +46,7 @@ const Prueba = () => {
       setMunicipiosData([]);
       setTasaCrecimiento(null);
     }
+    setState({...state,Departamento:departamento})
   }, [departamento, departamentosData]);
 
   useEffect(() => {
@@ -67,6 +69,7 @@ const Prueba = () => {
     } else {
       setNumHabitantes('');
     }
+    setState({...state,zonaPoblacion:zonaPoblacional,lotes:numLotes,lotesPersona:numPersonasPorLote})
   }, [numLotes, numPersonasPorLote]);
 
     useEffect(() => {
@@ -86,13 +89,14 @@ const Prueba = () => {
         else{
           const resultado = habitantesActuales * (1 + ((tasadecrecimiento / 100) * numeroAnios));
           console.log(habitantesActuales, "tasa de crecimiento:" + tasadecrecimiento,numeroAnios);
-          console.log(resultado);
+          console.log(5000*(1+(tasaCrecimiento/100)));
           setNumHabitantesFuturos(Math.round(resultado).toString());
         }
       } else {
         setNumHabitantesFuturos('');
       }
-    }, [nAnios]);
+      setState({...state,anos:nAnios,habitantes:numHabitantes,lotesHabitantes:numHabitantesFuturos,municpio:municipio,tasaC:tasaPoblacionalInput})
+    }, [nAnios,numHabitantes,tasaPoblacionalInput]);
 
   const renderDepartamentosDropdown = () => {
     return (
