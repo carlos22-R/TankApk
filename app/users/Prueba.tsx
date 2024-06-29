@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TextInput , ScrollView} from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import datosJson from '../../Data/Datos copy.json'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
+import datosJson from '../../Data/Datos copy.json';
 
 const Prueba = () => {
   const [departamento, setDepartamento] = useState(null);
@@ -11,14 +11,18 @@ const Prueba = () => {
   const [departamentosData, setDepartamentosData] = useState([]);
   const [municipiosData, setMunicipiosData] = useState([]);
   const [tasaCrecimiento, setTasaCrecimiento] = useState(null);
+  const [tasaPoblacionalInput, setTasaPoblacionalInput] = useState('');
+  const [numLotes, setNumLotes] = useState('');
+  const [numPersonasPorLote, setNumPersonasPorLote] = useState('');
+  const [numHabitantes, setNumHabitantes] = useState('');
+  const [nAnios,setnAnios] = useState('');
+  const [numHabitantesFuturos, setNumHabitantesFuturos] = useState('');
+
 
   useEffect(() => {
-    // Cargar datos del JSON cuando el componente se monta
     const loadDepartamentos = async () => {
       try {
-        // Simulamos una carga asíncrona
         setDepartamentosData(datosJson.departamentos);
-        console.log('Departamentos cargados:', datosJson.departamentos);
       } catch (error) {
         console.error('Error loading departamentos data', error);
       }
@@ -28,25 +32,67 @@ const Prueba = () => {
   }, []);
 
   useEffect(() => {
-    // Actualizar municipios y tasa de crecimiento cuando se selecciona un departamento
     if (departamento && departamentosData.length > 0) {
-      console.log('Cargando municipios y tasa de crecimiento');
       const selectedDepartamento = departamentosData.find(depto => depto.nombre === departamento);
       if (selectedDepartamento) {
         setMunicipiosData(selectedDepartamento.municipios || []);
         setTasaCrecimiento(selectedDepartamento.tasa_poblacional || null);
       } else {
-        // Si no se encuentra el departamento seleccionado, reiniciar los datos de municipios y tasa de crecimiento
         setMunicipiosData([]);
         setTasaCrecimiento(null);
       }
     } else {
-      // Si no hay departamento seleccionado, reiniciar los datos de municipios y tasa de crecimiento
       setMunicipiosData([]);
       setTasaCrecimiento(null);
-      console.log('No se cargan municipios');
     }
   }, [departamento, departamentosData]);
+
+  useEffect(() => {
+    if (municipio) {
+      const selectedMunicipio = municipiosData.find(muni => muni.nombre === municipio);
+      if (selectedMunicipio) {
+        setTasaPoblacionalInput(selectedMunicipio.tasa_poblacional.toString() || '');
+      }
+    } else {
+      setTasaPoblacionalInput('');
+    }
+  }, [municipio, municipiosData]);
+
+  useEffect(() => {
+    const lotes = parseInt(numLotes);
+    const personasPorLote = parseInt(numPersonasPorLote);
+
+    if (!isNaN(lotes) && !isNaN(personasPorLote)) {
+      setNumHabitantes((lotes * personasPorLote).toString());
+    } else {
+      setNumHabitantes('');
+    }
+  }, [numLotes, numPersonasPorLote]);
+
+    useEffect(() => {
+      const habitantesActuales = parseInt(numHabitantes);
+      const habitantesFuturos = parseInt(numHabitantesFuturos);
+      const numeroAnios = parseInt(nAnios);
+      const tasadecrecimiento = parseFloat(tasaPoblacionalInput);
+
+      if (!isNaN(habitantesActuales) && !isNaN(numeroAnios) && !isNaN(tasadecrecimiento)) {
+        if(habitantesActuales>=10000){
+          //setNumHabitantesFuturos((habitantesActuales*(1+(tasadecrecimiento/100))^numeroAnios).toString());
+          const resultado = habitantesActuales * ((1 + (tasadecrecimiento / 100)) ^ numeroAnios);
+          console.log(habitantesActuales, "tasa de crecimiento:" + tasadecrecimiento,numeroAnios);
+          console.log(resultado);
+          setNumHabitantesFuturos(Math.round(resultado).toString());
+        }
+        else{
+          const resultado = habitantesActuales * (1 + ((tasadecrecimiento / 100) * numeroAnios));
+          console.log(habitantesActuales, "tasa de crecimiento:" + tasadecrecimiento,numeroAnios);
+          console.log(resultado);
+          setNumHabitantesFuturos(Math.round(resultado).toString());
+        }
+      } else {
+        setNumHabitantesFuturos('');
+      }
+    }, [nAnios]);
 
   const renderDepartamentosDropdown = () => {
     return (
@@ -68,7 +114,8 @@ const Prueba = () => {
           value={departamento}
           onChange={item => {
             setDepartamento(item.value);
-            setMunicipio(null); // Resetear el municipio seleccionado al cambiar el departamento
+            setMunicipio(null);
+            setTasaPoblacionalInput('');
           }}
           renderLeftIcon={() => (
             <AntDesign
@@ -112,7 +159,6 @@ const Prueba = () => {
           renderItem={item => (
             <View style={styles.dropdownItem}>
               <Text>{item.label}</Text>
-              <Text style={styles.tasaCrecimientoText}>Tasa: {item.tasa_poblacional}</Text>
             </View>
           )}
           renderLeftIcon={() => (
@@ -124,6 +170,14 @@ const Prueba = () => {
             />
           )}
         />
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>Tasa Poblacional:</Text>
+          <TextInput
+            style={[styles.input, styles.dropdown]}
+            value={tasaPoblacionalInput}
+            editable={false}
+          />
+        </View>
       </View>
     );
   };
@@ -163,29 +217,106 @@ const Prueba = () => {
     );
   };
 
+  const renderPoblacionActualSection = () => {
+    return (
+      <View>
+        <Text style={styles.sectionTitle}>Población Actual</Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={[styles.input, styles.textInput]}
+            value={numLotes}
+            onChangeText={setNumLotes}
+            keyboardType="numeric"
+            placeholder="# de lotes"
+            placeholderTextColor="gray"
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={[styles.input, styles.textInput]}
+            value={numPersonasPorLote}
+            onChangeText={setNumPersonasPorLote}
+            keyboardType="numeric"
+            placeholder="# de personas por lote"
+            placeholderTextColor="gray"
+          />
+        </View>
+        {/* ///////////input calculado /////////////////*/}
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={[styles.input, styles.textInput]}
+            value={numHabitantes}
+            editable={false}
+            placeholder="# de habitantes"
+            placeholderTextColor="gray"
+          />
+        </View>
+      </View>
+    );
+  };
+  const renderPoblacionFuturaSection = () =>{
+    return (
+      <View>
+      <Text style={styles.sectionTitle}>Población Futura</Text>
+      <View style={styles.inputContainer}>
+          <TextInput
+            style={[styles.input, styles.textInput]}
+            value={nAnios}
+            onChangeText={setnAnios}
+            keyboardType="numeric"
+            placeholder="n(años)"
+            placeholderTextColor="gray"
+          />
+        </View>
+      <View style={styles.inputContainer}>
+          <TextInput
+            style={[styles.input, styles.textInput]}
+            value={numHabitantesFuturos}
+            editable={false}
+            placeholder="# de habitantes futuros"
+            placeholderTextColor="gray"
+          />
+        </View>
+      </View>
+    );
+  };
+
   return (
+    <ScrollView>
     <View style={styles.container}>
       {renderDepartamentosDropdown()}
       {renderMunicipiosDropdown()}
       {renderZonaPoblacionalDropdown()}
+      {renderPoblacionActualSection()}
+      {renderPoblacionFuturaSection()}
     </View>
+    </ScrollView>
   );
 };
-
-export default Prueba;
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     padding: 16,
   },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 16, // Espacio inferior opcional para separar del contenido siguiente
+  },  
   dropdown: {
     height: 50,
     borderColor: 'gray',
     borderWidth: 0.5,
     borderRadius: 8,
     paddingHorizontal: 8,
-    marginBottom: 16, // Agrega un margen inferior para separar los dropdowns
+    marginBottom: 16,
+  },
+  dropdownItem: {
+    padding: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   icon: {
     marginRight: 5,
@@ -204,8 +335,34 @@ const styles = StyleSheet.create({
     height: 40,
     fontSize: 16,
   },
-  tasaCrecimientoText: {
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  inputLabel: {
+    marginRight: 8,
     fontSize: 16,
-    marginTop: 8,
+    color: 'black',
+  },
+  input: {
+    flex: 1,
+    height: 50,
+    borderColor: 'gray',
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    color: 'black',
+    fontSize: 16,
+  },
+  textInput: {
+    marginBottom: 0, // Remove marginBottom for text inputs in Población Actual
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
   },
 });
+
+export default Prueba;
